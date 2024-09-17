@@ -1,0 +1,2 @@
+# scripts-irssi
+Scripts IRSSI
