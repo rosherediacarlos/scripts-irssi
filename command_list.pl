@@ -10,30 +10,31 @@ my $comandos = "\x02!hola:\x02 Saludo.
 \x02!virus:\x02 Revisar virus de la sala. 
 \x02!notice:\x02 Envia notice 
 \x02!hack <nick>:\x02 Hackear usuario. 
+\x02!Juegoanimales: \x02 Juego de los animales.
+\x02!comandos: \x02 Juego de los animales.
 \x02!desconectar:\x02 Cerrar sesion";
 
 # Función que se llama cuando alguien habla en el canal
-sub respuesta {
-    my ($servidor, $mensaje, $nick, $direccion, $target) = @_;
+sub response {
+    my ($server, $message, $nick, $address, $target) = @_;
 
-    if ($mensaje =~ /^!help$/i) {
+    if ($message =~ /^!comandos$/i) {
 
-        $servidor->command("/msg $nick Comandos displibles:");
-        $servidor->command("/msg $nick $comandos");
+        $server->command("/msg $nick Comandos displibles:");
+        $server->command("/msg $nick $comandos");
     }
     
 }
 
 # Función que se ejecuta cuando alguien se une al canal
 sub event_join {
-    my ($servidor, $mensaje, $nick, $direccion, $target) = @_;
+    my ($server, $message, $nick, $address, $target) = @_;
 
     # No dar la bienvenida a ti mismo
-    return if ($nick eq $servidor->{nick});
+    return if ($nick eq $server->{nick});
 
     # Enviar el mensaje de bienvenida
     
-    #$servidor->command("msg $canal $welcome_message $usuario");
     my $window = Irssi::active_win; 
     $window->command("/msg $nick Comandos displibles:");
     $window->command("/msg $nick $comandos");
@@ -43,5 +44,5 @@ sub event_join {
 Irssi::signal_add('message join', 'event_join');
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
-Irssi::signal_add('message public', 'respuesta');
+Irssi::signal_add('message public', 'response');
 

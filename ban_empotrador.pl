@@ -18,8 +18,6 @@ sub event_join {
         $server->command("kick $channel $nick No esta permitido el acceso");
     }
         
-
-
 }
 
 # Registrar el evento que detecta cuando alguien se une al canal

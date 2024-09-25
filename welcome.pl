@@ -8,10 +8,10 @@ Irssi::settings_add_str('welcome', 'welcome_message', 'Bienvenido hotel fantasma
 
 # Función que se ejecuta cuando alguien se une al canal
 sub event_join {
-    my ($servidor, $canal, $usuario, $direccion) = @_;
+    my ($server, $channel, $user, $address) = @_;
 
     # No dar la bienvenida a ti mismo
-    return if ($usuario eq $servidor->{nick});
+    return if ($user eq $server->{nick});
 
     # Obtener el mensaje de bienvenida desde la configuración
     my $welcome_message = Irssi::settings_get_str('welcome_message');

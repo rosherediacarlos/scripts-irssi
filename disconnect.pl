@@ -2,35 +2,32 @@ use strict;
 use warnings;
 use Irssi;
 
-# Registra el script con irssi
-#Irssi::script_register('mi_bot', '1.0', 'Bot simple de prueba');
-
 # Función que se llama cuando alguien habla en el canal
-sub respuesta {
-    my ($servidor, $mensaje, $nick, $direccion, $target) = @_;
+sub response {
+    my ($server, $message, $nick, $address, $target) = @_;
     
-    if ($mensaje =~ /^!desconectar$/i) {
+    if ($message =~ /^!desconectar$/i) {
         if ($nick =~ "error_404_" or $nick =~ "CoraIine"){
-            my $servidor = Irssi::active_server();
-            Irssi::print("Desconectando del servidor: " . $servidor->{address});
+            my $server = Irssi::active_server();
+            Irssi::print("Desconectando del servidor: " . $server->{address});
         
             # Desconectar del servidor
-            $servidor->disconnect();
+            $server->disconnect();
 
             # Cerrar todas las ventanas (canales, conversaciones privadas)
-            my @ventanas = Irssi::windows();
-            foreach my $ventana (@ventanas) {
-                $ventana->command("window close");
+            my @windows = Irssi::windows();
+            foreach my $window (@windows) {
+                $window->command("window close");
                 
             }
-            $servidor->command("/quit");
+            $server->command("/quit");
         }
         else{
-            $servidor->command("msg $target buen intento campeon/a $nick!");
+            $server->command("msg $target buen intento campeon/a $nick!");
         }
     }
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
-Irssi::signal_add('message public', 'respuesta');
+Irssi::signal_add('message public', 'response');
 
