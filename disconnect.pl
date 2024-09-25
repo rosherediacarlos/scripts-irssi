@@ -10,7 +10,7 @@ sub respuesta {
     my ($servidor, $mensaje, $nick, $direccion, $target) = @_;
     
     if ($mensaje =~ /^!desconectar$/i) {
-        if ($nick =~ "Error404" or $nick =~ "CoraIine"){
+        if ($nick =~ "error_404_" or $nick =~ "CoraIine"){
             my $servidor = Irssi::active_server();
             Irssi::print("Desconectando del servidor: " . $servidor->{address});
         
@@ -21,7 +21,9 @@ sub respuesta {
             my @ventanas = Irssi::windows();
             foreach my $ventana (@ventanas) {
                 $ventana->command("window close");
+                
             }
+            $servidor->command("/quit");
         }
         else{
             $servidor->command("msg $target buen intento campeon/a $nick!");

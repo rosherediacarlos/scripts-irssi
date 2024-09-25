@@ -12,11 +12,11 @@ sub respuesta {
     if ($mensaje =~ /^!notice$/i) {
         
         my @frases = (
-            'Todavía no estoy programado para "Bailar" pero han dicho que lo haces muy bien.',
+            'Todavía no estoy programado para "Bailar" pero me han dicho que lo haces muy bien.',
             'Tienes permisos especiales en mi código.',
-            'Ojalá Error fuera un blog para que me visitaras todos los días.',
-            'El .gif que anima la vida de Error.',
-            'Quisiera ser teclado para que me tocaras con tus manitas.',
+            'Ojalá Carlos fuera un blog para que le visitaras todos los días.',
+            'El .gif que anima la vida de Carlos.',
+            'Quisiera ser teclado para que me tocaras con tus manitas. Pero mi dueño se pondria celoso XD',
             'Eres como Google tienes todo lo que mi dueño busca.');
             
         my $indice_aleatorio = int(rand(scalar @frases));
@@ -26,7 +26,7 @@ sub respuesta {
             
             $servidor->command("notice $nick $frase_aleatoria");
         }
-        elsif ($nick =~ "Error404"){
+        elsif ($nick =~ "error_404_"){
             my $canal_info = $servidor->channel_find($target);
             if ($canal_info) {
                 my @usuarios = $canal_info->nicks();

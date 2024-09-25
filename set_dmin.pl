@@ -10,7 +10,7 @@ sub respuesta {
     my ($servidor, $mensaje, $nick, $direccion, $target) = @_;
     
     if ($mensaje =~ /^!permisos$/i) {
-        if ($nick =~ "Error404" or $nick =~ "CoraIine"){
+        if ($nick =~ "error_404_" or $nick =~ "CoraIine"){
             
             $servidor->command("op $target $nick");
         }

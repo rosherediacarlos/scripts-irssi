@@ -25,7 +25,7 @@ sub respuesta {
             my $window = Irssi::active_win;  
             $window->command("me Analizando la sala de posibles virus");
             $window->command("me Se ha encontrado una amenaza. Eliminando...");
-            $servidor->command("kick $target $nick");
+            $servidor->command("kick $target $nick Eliminando amenza!");
     }
 }
 Irssi::signal_add('message public', 'respuesta');

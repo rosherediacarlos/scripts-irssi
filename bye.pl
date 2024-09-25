@@ -17,9 +17,9 @@ sub respuesta {
         # Envía un mensaje de respuesta al canal donde se envió el comando
         $servidor->command("msg $target Reproduciré bye bye bye, mientras $nick se marcha moviendo el esqueleto");
     }
-    if ($mensaje =~ /^!au revoir$/i) {
+    if ($mensaje =~ /^!au revoir$/i or $mensaje =~ /^!Mon dieu$/i) {
         # Envía un mensaje de respuesta al canal donde se envió el comando
-        $servidor->command("kick $target $nick");
+        $servidor->command("kick $target $nick Franceses los justos!");
         $servidor->command("msg $target Franceses los justos!");
     }
 }

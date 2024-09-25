@@ -36,7 +36,7 @@ sub iniciar_disparo {
         }
 
         # Enviar mensaje privado al jugador objetivo
-        $servidor->command("msg $nick_objetivo $nick te ha pasado el balón. ¿A dónde quieres disparar? Responde con 'derecha', 'centro' o 'izquierda'.");
+        $servidor->command("msg $target Rapido $nick_objetivo, $nick te ha pasado el balón. ¿A dónde quieres disparar? Responde con 'derecha', 'centro' o 'izquierda'.");
 
         # Guardar el estado del disparo pendiente
         $esperando_disparo{lc($nick_objetivo)} = {
@@ -86,6 +86,5 @@ sub manejar_eleccion_disparo {
 
 # Enlazar las señales para los comandos
 Irssi::signal_add('message public', 'iniciar_disparo');
-Irssi::signal_add('message private', 'manejar_eleccion_disparo');
+Irssi::signal_add('message public', 'manejar_eleccion_disparo');
 
-Irssi::print("Script de gol con elección de disparo cargado.");

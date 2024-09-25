@@ -25,4 +25,4 @@ sub detect_user_connect {
 }
 
 # Vincular el script al evento de 'join' (cuando un usuario se conecta a la sala)
-Irssi::signal_add("message join", "detect_user_connect");
+#Irssi::signal_add("message join", "detect_user_connect");
