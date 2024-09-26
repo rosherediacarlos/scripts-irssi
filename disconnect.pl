@@ -2,15 +2,15 @@ use strict;
 use warnings;
 use Irssi;
 
+my @admin_nicks = ("error_404_","CoraIine", "luck");
+
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     
     if ($message =~ /^!desconectar$/i) {
-        if ($nick =~ "error_404_" or $nick =~ "CoraIine"){
+        if (grep { $_ eq $nick } @admin_nicks){
             my $server = Irssi::active_server();
-            Irssi::print("Desconectando del servidor: " . $server->{address});
-        
             # Desconectar del servidor
             $server->disconnect();
 

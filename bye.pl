@@ -6,9 +6,9 @@ use Irssi;
 #Irssi::script_register('mi_bot', '1.0', 'Bot simple de prueba');
 
 # Función que se llama cuando alguien habla en el canal
-sub respuesta {
+sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-    Irssi::print("mensaje: $mensaje");
+    
     if ($message =~ /^!adios$/i) {
         # Envía un mensaje de respuesta al canal donde se envió el comando
         $server->command("msg $target Hasta la proxima, $nick!");
@@ -25,5 +25,5 @@ sub respuesta {
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
-Irssi::signal_add('message public', 'respuesta');
+Irssi::signal_add('message public', 'response');
 

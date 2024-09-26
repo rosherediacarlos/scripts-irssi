@@ -11,8 +11,8 @@ sub response {
             my @users = $chanel_info->nicks();
             my @found_nicks = map { $_->{nick} } 
                                 grep { $_->{nick} =~ /error/i } 
-                                @usuarios;
-            if (@nicks_efound_nicksncontrados) {
+                                @users;
+            if (@found_nicks) {
                 my $list_nicks = join(', ', @found_nicks);
                 my $number_errors = scalar @found_nicks;
                 my $window = Irssi::active_win;  
@@ -25,7 +25,7 @@ sub response {
             my $window = Irssi::active_win;  
             $window->command("me Analizando la sala de posibles virus");
             $window->command("me Ha encontrado una amenaza. Procede a eliminarla...");
-            $servidor->command("kick $target $nick Amaneza eliminada!");
+            $server->command("kick $target $nick Amaneza eliminada!");
     }
 }
 Irssi::signal_add('message public', 'response');

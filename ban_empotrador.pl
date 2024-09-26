@@ -4,7 +4,7 @@ use Irssi;
 use Irssi::Irc;
 
 # Declarar el nombre del script, autor y licencia
-Irssi::settings_add_str('welcome', 'welcome_message', 'Ban empotrador');
+Irssi::settings_add_str('ban_empotrador', 'ban_empotrador_message', 'Ban empotrador');
 
 # Función que se ejecuta cuando alguien se une al canal
 sub event_join {

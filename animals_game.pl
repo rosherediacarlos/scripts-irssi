@@ -7,10 +7,12 @@ use List::Util 'shuffle';
 my @animals;                   # Lista de animales mencionados
 my @players;                   # Lista de jugadores
 my $current_player;            # Jugador actual
+my $last_player;               # Ultimo jugador
 my $timer;                     # Temporizador para controlar los 30 segundos
 my $timeout_interval = 30000;  # 30 segundos en milisegundos
 my $game_active = 0;           # Indicador de si el juego está en curso
 my $letter_start;              # Letra de inicio
+my $timer_to_expose = 60000;  # 1 minuto en milisegundos
 
 # Función para comenzar el juego
 sub start_game {
@@ -31,7 +33,7 @@ sub start_game {
     $current_player = shift @players;
 	
 	$server->command("msg $target 
-\x02\x0302Este juego de los animales ha iniciado. 
+\x02\x0302El juego de los animales ha iniciado. 
 En este juego saldrá un nick aleatorio y debera decir un animal, seguido de esto, 
 pasará el testigo a otro nick aleatorio. Este nuevo nick deberá decir otro animal, 
 no repetido, que empiece por la 3a letra del animal nombrado anteriormente.
@@ -87,10 +89,11 @@ sub handle_animal {
 		$server->command("msg $target ¡No quedan más  nicks en la sala!");
 		return
 	}
-	
+    
+    $last_player = $current_player;
     $current_player = shift @players;
     $server->command("msg $target $current_player es tu turno. Di un animal,
-que empiece por la letra\x02".uc($letter_start)."\x02.");
+que empiece por la letra \x02".uc($letter_start)."\x02.");
 
     # Reiniciar el temporizador
     reset_timer($server, $channel, $target);
@@ -103,6 +106,7 @@ sub start_timer {
     $timer = Irssi::timeout_add($timeout_interval, sub {
         $server->command("msg $target ¡$current_player ha perdido por no responder en los 30 segundos!");
         end_game($server,$channel, $target);
+	$server->command("msg $target ¡Todos listos para criticar a $current_player en la sala! (teneis 1min, no hacer flood, siempre respetando las normas y sin faltar el respeto)");
         start_timer_to_expose($server,$channel, $target);
     }, undef);
 }
@@ -117,19 +121,21 @@ sub reset_timer {
 # Finalizar el juego
 sub end_game {
     my ($server, $channel, $target) = @_;
-    
     $server->command("msg $target ¡El juego ha terminado!");
     Irssi::timeout_remove($timer);
     $game_active = 0;
+    $letter_start = "";
     
 }
 
 sub start_timer_to_expose {
-	my ($server, $channel, $target) = @_;
+    my ($server, $channel, $target) = @_;
     
-    $timer = Irssi::timeout_add($timeout_interval, sub {
-        $server->command("msg $target ¡Todos listos para criticar a $current_player en la sala! (teneis 1min, no hacer flood, siempre respetando las normas y sin faltar el respeto)");
-        end_game($server,$channel, $target);
+    $timer = Irssi::timeout_add(1000, sub {
+        $server->command("msg $target ¡Se ha acabado el tiempo!");
+        Irssi::timeout_remove($timer);
+	$game_active = 0;
+	$letter_start = "";
     }, undef);
 }
 
@@ -137,16 +143,27 @@ sub start_timer_to_expose {
 Irssi::signal_add('message public', sub {
     my ($server, $msg, $nick, $address, $target) = @_;
     
-    if ($msg =~ /^!Juegoanimales$/i) {
+    if ($msg =~ /^!juego_animales$/i) {
         # Comenzar el juego si alguien escribe !animalgame        
         my $channel = $server->window_item_find($target);
         start_game($server, $channel, $target);
         
-    } elsif ($msg =~ /^!Perdido\s+(\w+)/i) {
-        my $lost_nick = $1;
-        end_game($server,$channel, $target);
-		$server->command("msg $target $lost_nick Ha perdido");
-		return
+    } elsif ($msg =~ /^!fin$/i) {
+	my $channel = $server->window_item_find($target);
+	my $nick_object = $channel->nick_find($nick);
+	
+	if ($nick_object->{op} && $game_active) {
+
+	    end_game($server, $channel, $target);
+
+	    if ($last_player) {
+		$server->command("msg $target $last_player ha perdido. ¡Todos listos para criticar a $last_player en la sala! (tienen 1min, no hacer flood, siempre respetando las normas y sin faltar el respeto)");
+		start_timer_to_expose($server, $channel, $target);
+	    }
+
+	    return;
+
+	}
     } elsif ($game_active && $msg =~ /^(\w+)$/) {
         # Manejar cuando alguien dice un animal
         my $animal = $1;

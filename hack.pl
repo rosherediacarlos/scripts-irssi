@@ -2,9 +2,6 @@ use strict;
 use warnings;
 use Irssi;
 
-# Registro del script con irssi
-#Irssi::script_register('hack_script', '1.0', 'Hack script que permite al usuario objetivo elegir una opción.');
-
 # Hash para almacenar los estados de hackeo pendientes
 my %pending_hacks;
 
