@@ -131,7 +131,7 @@ sub end_game {
 sub start_timer_to_expose {
     my ($server, $channel, $target) = @_;
     
-    $timer = Irssi::timeout_add(1000, sub {
+    $timer = Irssi::timeout_add($timer_to_expose, sub {
         $server->command("msg $target ¡Se ha acabado el tiempo!");
         Irssi::timeout_remove($timer);
 	$game_active = 0;
@@ -142,7 +142,7 @@ sub start_timer_to_expose {
 # Evento cuando alguien envía un mensaje
 Irssi::signal_add('message public', sub {
     my ($server, $msg, $nick, $address, $target) = @_;
-    
+
     if ($msg =~ /^!juego_animales$/i) {
         # Comenzar el juego si alguien escribe !animalgame        
         my $channel = $server->window_item_find($target);
