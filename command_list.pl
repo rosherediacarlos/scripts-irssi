@@ -49,15 +49,18 @@ sub event_join {
 
     # Enviar el mensaje de bienvenida
     
-    my $window = Irssi::active_win; 
-    $window->command("/msg $nick Comandos disponibles:");
-        $window->command("/msg $nick $commands");
-        $window->command("/msg $nick Juegos disponibles:");
-        $window->command("/msg $nick $games");
-        if (grep { $_ eq $nick } @admin_nicks){
-            $window->command("/msg $nick Comandos administradores:");
-            $window->command("/msg $nick $hidden_commands");
-        }
+    $server->command("/query $nick");
+    $server->command("/msg $nick Comandos disponibles:");
+    $server->command("/msg $nick $commands");
+    $server->command("/msg $nick Juegos disponibles:");
+    $server->command("/msg $nick $games");
+    if (grep { $_ eq $nick } @admin_nicks){
+        $server->command("/msg $nick Comandos administradores:");
+        $server->command("/msg $nick $hidden_commands");
+    }
+    
+    # Cerrar la ventana después de enviar los mensajes
+    $server->command("/window close");
 }
 
 # Registrar el evento que detecta cuando alguien se une al canal

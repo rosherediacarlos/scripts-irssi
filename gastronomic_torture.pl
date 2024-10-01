@@ -29,10 +29,10 @@ my $chef_nick;
 my @clues;
 # Temporizador para controlar los 30 segundos
 my $timer;       
-# 5minutos en milisegundos           
-#my $timeout_interval = 300000;  
+# 5 minutos en milisegundos           
+my $timeout_interval = 300000;  
 #Para pruebas reducimos el tiempo a 1 min
-my $timeout_interval = 30000;  
+#my $timeout_interval = 30000;  
 #Sala para jugar
 my $channel = "#prueba-test";
 
