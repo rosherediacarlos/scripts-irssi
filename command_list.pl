@@ -10,7 +10,9 @@ my $commands = "\x02!hola:\x02 Saludo.
 my $games ="\x02!virus: \x02 buscar virus en la sala.
 \x02!hack <nick>:\x02 Hackear usuario. 
 \x02!juego_animales: \x02 Juego de los animales. (Los admins tienen el comando \x02!fin\x02 para indicar el usaurio que ha perdido)
-\x02!!gol <nick>: \x02 Juego para intentar marcar gol." ;
+\x02!gol <nick>: \x02 Juego para intentar marcar gol.
+\x02!menu <plato>: \x02 (este comando debe ser en pv a Greavard) Juego de la tortura gastronómica.
+\x02!copa libertadores <numero equipos>: Simular la Copa Libertadores (El numero de equipos debe ser 2,4,8o 16)" ;
 
 my $hidden_commands = "\x02!desconectar:\x02 Cerrar sesion.
 \x02!permisos:\x02 Añade op.";
