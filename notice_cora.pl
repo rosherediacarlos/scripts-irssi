@@ -2,17 +2,20 @@ use strict;
 use warnings;
 use Irssi;
 
+my $channel = "#prueba-test";
+
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     
     if ($message =~ /^!mariposa$/i) {
-        my $chanel_info = $server->channel_find($target);
-            if ($chanel_info) {
-            my @users = $chanel_info->nicks();
-            my @found_nicks = map { $_->{nick} } 
-                                grep { $_->{nick} =~ /CoraIine/i } 
-                                @users;
+        my $chanel_info = $server->channel_find($channel);
+        if ($chanel_info) {
+        my @users = $chanel_info->nicks();
+        my @found_nicks = map { $_->{nick} } 
+                            grep { $_->{nick} =~ /CoraIine/i } 
+                            @users;
+            
             if (@found_nicks) { 
                 
                 my $list_nicks = join(', ', @found_nicks);
@@ -58,5 +61,5 @@ sub response {
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
-Irssi::signal_add('message public', 'response');
+Irssi::signal_add('message private', 'response');
 
