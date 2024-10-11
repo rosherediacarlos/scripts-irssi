@@ -13,9 +13,12 @@ my $games ="\x02\x0302Juegos disponibles:\x03\x02
 \x02!hack <nick>:\x02 Hackear usuario. 
 \x02!juego_animales: \x02 Juego de los animales. (Los admins tienen el comando \x02!fin\x02 para indicar el usaurio que ha perdido)
 \x02!gol <nick>: \x02 Pasar el balón para intentar marcar gol.
-\x02!susto <nick>:\x02 Dar un susto al usuario. 
+\x02!susto <nick>:\x02 Dar un susto al usuario.
+\x02!patata:\x02 reaccionar al susto.
+\x02!sombrero seleccionador:\x02 Elegir la casa a la que pertenecerás.
+\x02!minipekka <nick>:\x02 Enviar al miniPEKKA al ataque.
 \x02!menu <plato>: \x02 (este comando debe ser en pv a Greavard) Juego de la tortura gastronómica.
-\x02!copa libertadores <numero equipos>:\x02 Simular la Copa Libertadores (El número de equipos debe ser 2,4,8 o 16)" ;
+\x02!copa libertadores <numero equipos>:\x02 Simular la Copa Libertadores (El número de equipos debe ser 2,4,8 o 16) (tambien esta el comando !fin copa para terminar la simulación)" ;
 
 my $hidden_commands = "\x02!desconectar:\x02 Cerrar sesión.
 \x02!permisos:\x02 Añade op.";

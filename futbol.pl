@@ -72,8 +72,17 @@ sub handle_shot_choice {
         my $result;
         if ($choice eq $golkeaper_choise) {
             $result = "¡El portero detuvo el disparo a la $choice!";
+            if ($golkeaper_choise eq 'centro'){
+                $result = "¡El portero detuvo el disparo al $choice!";
+            }
+            
         } else {
             $result = "¡GOL en la $choice! El portero se lanzó a la $golkeaper_choise.";
+            if ($golkeaper_choise eq 'centro'){
+                $result = "¡GOL en la $choice! El portero se lanzó al $golkeaper_choise.";
+            }else{
+                
+            }
         }
 
         # Anunciar el resultado en el canal

@@ -7,9 +7,9 @@ use List::Util 'shuffle';
 # Equipos iniciales
 my @teams = (
     "Independiente", "Boca Juniors", "Peñarol", "River Plate", 
-    "Estudiantes de La Plata", "Olimpia", "Nacional", "São Paulo", 
-    "Palmeiras", "Santos", "Grêmio", "Flamengo", 
-    "Cruzeiro", "Internacional", "Atlético Nacional", "Colo-Colo"
+    "Estudiantes de La Plata", "Olimpia", "Nacional", "Sao Paulo", 
+    "Palmeiras", "Santos", "Gremio", "Flamengo", 
+    "Cruzeiro", "Internacional", "Atletico Nacional", "Colo-Colo"
 );
 
 # Partidos y resultados
@@ -34,10 +34,16 @@ sub vote_team {
     my ($server, $message, $nick, $target) = @_;
     my $team_name = lc($message);
     # Primera letra en mayúscula
-    $team_name =~ s/\b(\w)/\U$1/g;  
+    $team_name =~ s/\b(\w)/\U$1/g; 
+    if (lc($message) eq 'peñarol'){
+        $team_name = "Peñarol";
+    }
     if (exists $result{$team_name}) {
         # Incrementar el contador de votos
-        $result{$team_name}++;  
+        $result{$team_name}++; 
+        my @match_teams = keys %result;
+        my $string_result = "$match_teams[0] $result{$match_teams[0]} vs $match_teams[1] $result{$match_teams[1]}"; 
+        $server->command("msg $target !GOL! para $team_name. El partido va $string_result");
     } else {
         $server->command("msg $target $nick. $team_name no está jugando el partido.");
     }
@@ -112,7 +118,7 @@ sub start_single_match {
             # Ya tenemos un único ganador
             my $team_winner = $round_winners[0];
             $server->command("msg $target \x0303¡El campeón de la Copa Libertadores es \x02$team_winner\x02\x0303!");
-            $playing_cup = 0;
+            reset_tournament();
         }
     }
 }
@@ -183,6 +189,27 @@ sub print_draw_pairings {
 
     $server->command("msg $target $complete_message");
 }
+
+sub reset_tournament {
+    # Reinicia todas las variables del torneo
+    @teams = (
+        "Independiente", "Boca Juniors", "Peñarol", "River Plate", 
+        "Estudiantes de La Plata", "Olimpia", "Nacional", "Sao Paulo", 
+        "Palmeiras", "Santos", "Gremio", "Flamengo", 
+        "Cruzeiro", "Internacional", "Atlatico Nacional", "Colo-Colo"
+    );
+    # Reinicia los emparejamientos
+    @matches = ();   
+    # Reinicia los ganadores de las rondas        
+    @round_winners = ();
+    # Permite iniciar un nuevo torneo     
+    $playing_cup = 0;    
+    # Reinicia el índice del partido actual    
+    $current_match_index = 0; 
+    # Limpia los resultados
+    %result = ();            
+}
+
 
 # Iniciar el torneo de la Copa Libertadores
 sub start_libertadores_cup {

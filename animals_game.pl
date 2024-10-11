@@ -83,20 +83,42 @@ sub handle_animal {
     push @animals, $animal;  # Añadir animal a la lista
     $server->command("msg $target $player Ha dicho $animal.");
     
-    # Seleccionar siguiente jugador
+	# Seleccionar siguiente jugador
 	if (scalar(@players) <= 0){	
-		end_game($server,$channel, $target);
-		$server->command("msg $target ¡No quedan más  nicks en la sala!");
-		return
+	    #end_game($server,$channel, $target);
+	    #$server->command("msg $target ¡No quedan más  nicks en la sala!");
+	    #return
+	    # Volvermos a rellenar la lista de los nick de la sala
+	    @players = shuffle map { $_->{nick} } $channel->nicks();
+	    @players = grep { $_ ne 'Greavard' } @players;
 	}
     
     $last_player = $current_player;
-    $current_player = shift @players;
+    $current_player = select_next_user($channel);
     $server->command("msg $target $current_player es tu turno. Di un animal,
 que empiece por la letra \x02".uc($letter_start)."\x02.");
 
     # Reiniciar el temporizador
     reset_timer($server, $channel, $target);
+}
+
+sub select_next_user {
+    my ($channel) = @_;
+    my $random_nick;
+
+    # Bucle while que se ejecuta hasta que se encuentre un nick válido o se agote la lista
+    while (!$random_nick && @players) {
+        # Obtener un nick aleatorio de la lista
+        my $new_nick = shift @players;
+
+        # Verificar si el nick aún está en el canal
+        if ($channel->nick_find($new_nick)) {
+	    # Asignar el nick encontrado
+            $random_nick = $new_nick;  
+        }
+    }
+    # Retornar el nick encontrado (o undef si no se encuentra)
+    return $random_nick;  
 }
 
 # Función para manejar el temporizador de 30 segundos

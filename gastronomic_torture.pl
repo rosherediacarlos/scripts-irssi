@@ -111,12 +111,14 @@ Una vez insertadas las pistas, utiliza el comando \x02!empezar_tortura\x02 para 
 sub check_food_plate{
     my ($server, $message, $nick, $addess, $target) = @_;
     #Comprobar si el juego sigue iniciado
-    if ($food_plate) {
+    if ($food_plate && $message =~ /^!plato\s+(\w+)/i) {
+        # Respuesta del usuario
+        my $user_plate = $1;
         #Si acierta el usuario
-        if ($message =~ $food_plate){
+        if (lc($user_plate) eq lc($food_plate)){
             $server->command("msg $target $nick \x02\x0303Has acertado el plato\x02\x0303");
             $server->command("mode $target +v $nick");
-            $server->command("msg $target $nick \x02\x0303Aquí tienes tu estrella por salir con vida de la tortura gastronómica.\x02\x0303");
+            $server->command("msg $target $nick \x02\x0303Aquí tienes tu estrella michelin por salir con vida de la tortura gastronómica.\x02\x0303");
             $food_plate = "";
         #En caso de fallo se elige una tortura aleatoria para el usuario
         }else {
@@ -131,7 +133,7 @@ sub check_food_plate{
 sub start_timer {
     my ($server, $target) = @_;
     
-    $server->command("msg $channel Ya tenemos al chef $chef_nick preparando la tortura gastronómica. ¿Quién adivinará el plato sin sufrir en el camino?");
+    $server->command("msg $channel Ya tenemos al chef $chef_nick preparando la tortura gastronómica. ¿Quién adivinará el plato sin sufrir en el camino? (Para probar suerte utiliza '!plato opción')");
     
     #Dividir el tiempo entre el numero de pistas
     my $time_for_clue = 1;
@@ -147,7 +149,9 @@ sub start_timer {
         # Aumentamos el tiempo acumulativo para cada pista
         my $current_timeout = $time_offset;
         Irssi::timeout_add_once($current_timeout, sub {
-            $server->command("msg $channel \x02Nueva pista:\x02 $clue");
+            if ($food_plate){
+                $server->command("msg $channel \x02Nueva pista:\x02 $clue");
+            }
         }, undef);
         
         # Incrementar el tiempo de espera acumulativo para la siguiente pista

@@ -18,7 +18,7 @@ sub check_user_channel{
 }
 
 sub send_request{
-    my ($server,$found_nick, $request, $target) = @_;
+    my ($server, $request, $target,$found_nick) = @_;
     
     if ($found_nick) {
         $server->command("msg $target $request");
@@ -36,7 +36,13 @@ sub response {
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
         my $request= "$nick se pone la capa de invisibilidad para darle un susto de muerte a $tarject_nick!";
-        send_request($server,$found_nick, $request, $target);
+        send_request($server, $request, $target,$found_nick);
+    }
+    elsif ($message =~ /^!patata$/i) {
+        my $found_nick = $nick;
+        print("aaa");
+        my $request= "A $nick casi le peta la patata del susto. ¡Estuvo a punto de convertirse en puré para la sala!";
+        send_request($server, $request, $target, $found_nick);
     }
 }
 
