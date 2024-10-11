@@ -35,10 +35,25 @@ sub response {
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
-        my $request= "$nick ha lanzado la carta del miniPEKKA contra $tarject_nick, por el camino al pobre PEKKA le entra hambre de repetir 'pancakes'";
+        my $request= "$nick ha lanzado la carta del miniPEKKA contra $tarject_nick, por el camino va abriendo el aptito a la gente repitiendo 'pancakes'";
         send_request($server, $request, $target,$found_nick);
     }
-
+    elsif ($message =~ /^!bola de fuego\s+(\w+)/i) {
+        # Extraemos el nick al que va dirigido el pase
+        my $tarject_nick = $1;  
+        # Verificar si el nick está en el canal
+        my $found_nick = check_user_channel($server,$tarject_nick, $target);
+        my $request= "$nick lanza una bola de fuego a $tarject_nick";
+        send_request($server, $request, $target,$found_nick);
+    }
+    elsif ($message =~ /^!zap\s+(\w+)/i) {
+        # Extraemos el nick al que va dirigido el pase
+        my $tarject_nick = $1;  
+        # Verificar si el nick está en el canal
+        my $found_nick = check_user_channel($server,$tarject_nick, $target);
+        my $request= "$nick te lanza una descarga reiniciándote, $tarject_nick!";
+        send_request($server, $request, $target,$found_nick);
+    }
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
