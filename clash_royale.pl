@@ -35,7 +35,7 @@ sub response {
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
-        my $request= "$nick ha lanzado la carta del miniPEKKA contra $tarject_nick, por el camino va abriendo el aptito a la gente repitiendo 'pancakes'";
+        my $request= "$nick ha lanzado la carta del miniPEKKA contra $tarject_nick, por el camino va abriendo el apetito a la gente repitiendo 'pancakes'";
         send_request($server, $request, $target,$found_nick);
     }
     elsif ($message =~ /^!bola de fuego\s+(\w+)/i) {
@@ -43,7 +43,8 @@ sub response {
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
-        my $request= "$nick lanza una bola de fuego a $tarject_nick";
+        my $request= "$nick lanza una bola de fuego a $tarject_nick, el miedo impide moverte. Te golpea en la frente,, probocando la descrucción de todo 
+lo que te rodea y a ti te convertie en pollo frito churrascado";
         send_request($server, $request, $target,$found_nick);
     }
     elsif ($message =~ /^!zap\s+(\w+)/i) {
