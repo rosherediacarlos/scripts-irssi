@@ -120,6 +120,7 @@ sub check_food_plate{
             $server->command("mode $target +v $nick");
             $server->command("msg $target $nick \x02\x0303Aquí tienes tu estrella michelin por salir con vida de la tortura gastronómica.\x02\x0303");
             $food_plate = "";
+            @clues = ();
         #En caso de fallo se elige una tortura aleatoria para el usuario
         }else {
             my $random_index = int(rand(scalar @tortures));
@@ -161,9 +162,9 @@ sub start_timer {
     # Añadir un temporizador final para mostrar el mensaje de finalización
     Irssi::timeout_add_once(($timeout_interval+10), sub {
         if ($food_plate) {
-            Irssi::print($food_plate);
             $server->command("msg $channel \x0304¡La \x02tortura gastronómica \x02 ha terminado y nadie ha sido capaz de acertar!\x0304");
             $food_plate = "";
+            @clues = ();
         }
     }, undef);
 
