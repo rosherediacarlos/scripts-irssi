@@ -41,7 +41,7 @@ Tienes 30 segundos para pensar el animal o perderás el juego.
 El juego acabará cuando no queden más usuarios para decir animal o alguien pierda.\x02\x0302 
 \x02\x0314 Por ejemplo, empieza nick2 el cual dice 'Perro', 
 el siguiente nick debe decir un animal que empiece por R 'Ratón'.\x02\x0314");
-    $server->command("msg $target ¡El juego ha comenzado! $current_player, di un animal.");
+    $server->command("msg $target ¡El juego ha comenzado! $current_player, di un animal (Usando el comando !animal <animal>).");
     $game_active = 1;
     
     # Iniciar el temporizador de 30 segundos
@@ -186,7 +186,7 @@ Irssi::signal_add('message public', sub {
 	    return;
 
 	}
-    } elsif ($game_active && $msg =~ /^(\w+)$/) {
+    } elsif ($game_active && $msg =~ /^!!animal\s+(\w+)/i) {
         # Manejar cuando alguien dice un animal
         my $animal = $1;
         my $channel = $server->window_item_find($target);
