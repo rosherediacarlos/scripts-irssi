@@ -9,21 +9,37 @@ sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     
     if ($message =~ /^!mariposa$/i) {
-        my $chanel_info = $server->channel_find($channel);
-        if ($chanel_info) {
-        my @users = $chanel_info->nicks();
-        my @found_nicks = map { $_->{nick} } 
-                            grep { $_->{nick} =~ /CoraIine/i } 
-                            @users;
-            
-            if (@found_nicks) { 
+        if ($nick eq "error_404_"){
+            my $chanel_info = $server->channel_find($channel);
+            if ($chanel_info) {
+            my @users = $chanel_info->nicks();
+            my @found_nicks = map { $_->{nick} } 
+                                grep { $_->{nick} =~ /CoraIine/i } 
+                                @users;
                 
-                my $list_nicks = join(', ', @found_nicks);
-                my $window = Irssi::active_win;  
-                $window->command("me Observa la mariposa $list_nicks volar libre por sala con sus preciosas alas");
+                if (@found_nicks) { 
+                    
+                    my $list_nicks = join(', ', @found_nicks);
+                    my $window = Irssi::active_win;  
+                    $window->command("/msg $list_nicks Observa la mariposa $list_nicks volar libre por sala con sus preciosas alas");
+                }
+            }
+        }elsif ($nick =~ "CoraIine"){
+            my $chanel_info = $server->channel_find($channel);
+            if ($chanel_info) {
+            my @users = $chanel_info->nicks();
+            my @found_nicks = map { $_->{nick} } 
+                                grep { $_->{nick} =~ /error_404_/i } 
+                                @users;
+                
+                if (@found_nicks) { 
+                    
+                    my $list_nicks = join(', ', @found_nicks);
+                    my $window = Irssi::active_win;  
+                    $window->command("/msg $list_nicks Se posa sobre los labios de su amor $list_nicks");
+                }
             }
         }
-
     }
     
     if ($message =~ /^!notice$/i) {
