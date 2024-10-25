@@ -2,12 +2,12 @@ use strict;
 use warnings;
 use Irssi;
 
-my $channel = "#prueba-test";
+my $channel = "#hotelfantasma";
 
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-    
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!mariposa$/i) {
         if ($nick eq "error_404_"){
             my $chanel_info = $server->channel_find($channel);
@@ -36,7 +36,7 @@ sub response {
                     
                     my $list_nicks = join(', ', @found_nicks);
                     my $window = Irssi::active_win;  
-                    $window->command("/msg $list_nicks Se posa sobre los labios de su amor $list_nicks");
+                    $window->command("/msg $list_nicks Se posa sobre los labios y de la unos USB a su hello world  $list_nicks");
                 }
             }
         }

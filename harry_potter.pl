@@ -20,7 +20,7 @@ my %description = (
 # chat indica unos de los siguientes comandos
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!sombrero seleccionador/i) {
         my $window = Irssi::active_win; 
         $window->command("me Empuja a $nick contra el trono. Le coloca el sombrero seleccionador en la cabeza.");

@@ -9,7 +9,7 @@ my %waiting_shot;
 # Función para manejar el comando !gol
 sub start_shot {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!gol\s+(\w+)/i) {
         my $tarject_nick = $1;  # Extraemos el nick al que va dirigido el pase
 
@@ -49,7 +49,7 @@ sub start_shot {
 # Función para manejar la elección del disparo del jugador
 sub handle_shot_choice {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     # Verificar si el jugador está en la lista de espera para disparar
     if (exists $waiting_shot{lc($nick)}) {
         my $choice = lc($message);

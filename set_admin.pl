@@ -5,9 +5,10 @@ use Irssi;
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-    
+    my @admins_nicks = ('error_404_', 'CoraIine', 'Luck', 'Mai');
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!permisos$/i) {
-        if ($nick =~ "error_404_" or $nick =~ "CoraIine"){
+        if (grep { $_ eq $nick } @admins_nicks){
             
             $server->command("op $target $nick");
         }

@@ -138,7 +138,7 @@ sub check_user_option{
 }
 
 # Enlazar la señal 'message private' a nuestra función
-Irssi::signal_add('message private', 'guess_user_games');
+#Irssi::signal_add('message private', 'guess_user_games');
 
 # Enlazar la señal 'message public' a nuestra función
-Irssi::signal_add('message public', 'check_user_option');
+#Irssi::signal_add('message public', 'check_user_option');

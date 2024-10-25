@@ -8,6 +8,7 @@ my %pending_hacks;
 # Función para manejar el comando !hack
 sub hack_command {
     my ($server, $msg, $nick, $address, $channel) = @_;
+    $msg =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     my @split_msg = split(' ', $msg);
     my $hack_nick = $split_msg[-1];
     

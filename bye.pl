@@ -8,7 +8,7 @@ use Irssi;
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-    
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!adios$/i) {
         # Envía un mensaje de respuesta al canal donde se envió el comando
         $server->command("msg $target Hasta la proxima, $nick!");

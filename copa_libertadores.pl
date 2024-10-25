@@ -19,7 +19,7 @@ my @round_winners = ();
 my $playing_cup = 0;
 my $current_match_index = 0;
 # 30 segundos
-my $timeout_interval = 30000;  
+my $timeout_interval = 20000;  
 my %result;
 my $team_win;
 my %rounds = (
@@ -32,6 +32,7 @@ my %rounds = (
 # Función para votar por un equipo
 sub vote_team {
     my ($server, $message, $nick, $target) = @_;
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     my $team_name = lc($message);
     # Primera letra en mayúscula
     $team_name =~ s/\b(\w)/\U$1/g; 
@@ -214,7 +215,7 @@ sub reset_tournament {
 # Iniciar el torneo de la Copa Libertadores
 sub start_libertadores_cup {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!copa libertadores (\d+)/i) {
         my $num_teams = $1;
 

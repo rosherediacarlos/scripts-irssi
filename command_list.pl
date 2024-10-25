@@ -9,30 +9,52 @@ my $commands = "\x02\x0302Comandos:\x03\x02
 \x02!comandos: \x02 mostrar todos los comandos.";
 
 my $games ="\x02\x0302Juegos disponibles:\x03\x02
-\x02!virus: \x02 buscar virus en la sala.
+\x02!virus: \x02 buscar virus en la sala. 
 \x02!hack <nick>:\x02 Hackear usuario. 
-\x02!gol <nick>: \x02 Pasar el balón para intentar marcar gol.
-\x02!susto <nick>:\x02 Dar un susto al usuario.
-\x02!patata:\x02 reaccionar al susto.
-                                    
-\x02!bola de fuego <nick>:\x02 lanzar una bola de fuego.
-\x02!zap <nick>:\x02 lanzar una descarga
-\x02!sombrero seleccionador:\x02 Elegir la casa a la que pertenecerás.
-\x02!minipekka <nick>:\x02 Enviar al miniPEKKA al ataque.
-\x02!juego_animales: \x02 Juego de los animales. (Los admins tienen el comando \x02!fin\x02 para indicar el usaurio que ha perdido)
-                                                                                    
-\x02!menu <plato>: \x02 (este comando debe ser en pv a Greavard) Juego de la tortura gastronómica.
-\x02!copa libertadores <numero equipos>:\x02 Simular la Copa Libertadores (El número de equipos debe ser 2,4,8 o 16) (tambien esta el comando !fin copa para terminar la simulación)" ;
+\x02!gol <nick>: \x02 Pasar el balón para intentar marcar gol. 
+\x02!susto <nick>:\x02 Dar un susto al usuario. 
+\x02!patata:\x02 reaccionar al susto. 
+                            
+\x02!bola de fuego <nick>:\x02 lanzar una bola de fuego. 
+\x02!zap <nick>:\x02 lanzar una descarga. 
+\x02!sombrero seleccionador:\x02 Elegir la casa a la que pertenecerás. 
+\x02!minipekka <nick>:\x02 Enviar al miniPEKKA al ataque. 
+\x02!juego_animales: \x02 Juego de los animales (Los admins tienen el comando \x02!fin\x02 para indicar el usaurio que ha perdido). 
+                                                                                 
+\x02!pelicula <pelicula>:\x02 Iniciar una sesión de cine para adivinar serie/pelicula/anime (este comando debe ser en pv a Greavard). 
+\x02!menu <plato>: \x02 (este comando debe ser en pv a Greavard) Juego de la tortura gastronómica. 
+\x02!copa libertadores <numero equipos>:\x02 Simular la Copa Libertadores (El número de equipos debe ser 2,4,8 o 16, tambien esta el comando !fin copa para terminar la simulación) " ;
 
 my $hidden_commands = "\x02!desconectar:\x02 Cerrar sesión.
-\x02!permisos:\x02 Añade op.";
+\x02!permisos:\x02 Añade op.
+\x02!restartbot:\x02 si algun script queda en bucle puedes probar este comando antes de desconectarlo.";
+#
 
-my @admin_nicks = ("error_404_","CoraIine", "luck");
+my @admin_nicks = ("error_404_","CoraIine", "luck", "Mai");
 
 #comandos ocultos
 #!notice: envia notice a CoraIine
 #!errores:\x02 Revisar errores de la sala. 
 #!mariposa: busca el nick de cora y escribe una frase.
+
+sub close_windows_except_1_and_2 {
+    my $server = shift;
+    
+    # Obtiene todas las ventanas abiertas
+    my @windows = Irssi::windows();
+
+    foreach my $window (@windows) {
+        my $win_number = $window->{refnum};
+
+        # Si el número de la ventana no es 1 ni 2, ciérrala
+        if ($win_number != 1 && $win_number != 2) {
+            Irssi::command("window $win_number close");
+        }
+    }
+}
+
+# Configurar el temporizador para que se ejecute cada hora (3600000 milisegundos = 1 hora)
+Irssi::timeout_add(3600000, 'close_windows_except_1_and_2', undef);
 
 # Funcion que envia los mensajes
 sub send_messages{
@@ -55,7 +77,7 @@ sub send_messages{
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!comandos$/i) {
         send_messages($server,$nick);
         

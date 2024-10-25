@@ -29,7 +29,7 @@ sub send_request{
 # chat indica unos de los siguientes comandos
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!minipekka\s+(\w+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
@@ -43,8 +43,8 @@ sub response {
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
-        my $request= "$nick lanza una bola de fuego a $tarject_nick, el miedo impide moverte. Te golpea en la frente,, probocando la descrucción de todo 
-lo que te rodea y a ti te convertie en pollo frito churrascado";
+        my $request= "$nick lanza una bola de fuego a $tarject_nick. El miedo te paraliza. 
+Te golpea en la frente, destruyendo todo a tu alrededor y convirtiéndote en un pollo frito churruscado";
         send_request($server, $request, $target,$found_nick);
     }
     elsif ($message =~ /^!zap\s+(\w+)/i) {

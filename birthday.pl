@@ -17,33 +17,23 @@ sub check_user_channel{
     return $found_nick;
 }
 
-sub send_request{
-    my ($server, $request, $target,$found_nick) = @_;
-    
-    if ($found_nick) {
-        $server->command("msg $target $request");
-    }
-}
-
-# Función que se llama cuando alguien ejecuta cuando alguien del 
-# chat indica unos de los siguientes comandos
+# Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
-    if ($message =~ /^!susto\s+(\w+)/i) {
+    if ($message =~ /^!felicidades\s+(\w+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
-        my $request= "$nick se pone la capa de invisibilidad para darle un susto de muerte a $tarject_nick!";
-        send_request($server, $request, $target,$found_nick);
+        if ($found_nick){
+            my $request= "¡Cumpleaños feliz! ¡Cumpleaños feliz! ¡Te desean tus amigos desde aquí!";
+            my $window = Irssi::active_win; 
+            $window->command("/me saca el reproductor de CDs y prepara el cd de música, para celebrar el cumpleaños de $tarject_nick");
+            $server->command("msg $target $request");
+        }
     }
-    elsif ($message =~ /^!patata$/i) {
-        my $found_nick = $nick;
-        print("aaa");
-        my $request= "A $nick casi le peta la patata del susto. ¡Estuvo a punto de convertirse en puré para la sala!";
-        send_request($server, $request, $target, $found_nick);
-    }
+
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta

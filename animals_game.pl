@@ -164,7 +164,7 @@ sub start_timer_to_expose {
 # Evento cuando alguien envía un mensaje
 Irssi::signal_add('message public', sub {
     my ($server, $msg, $nick, $address, $target) = @_;
-
+    
     if ($msg =~ /^!juego_animales$/i) {
         # Comenzar el juego si alguien escribe !animalgame        
         my $channel = $server->window_item_find($target);
@@ -186,7 +186,7 @@ Irssi::signal_add('message public', sub {
 	    return;
 
 	}
-    } elsif ($game_active && $msg =~ /^!!animal\s+(\w+)/i) {
+    } elsif ($game_active && $msg =~ /^!animal\s+(\w+)/i) {
         # Manejar cuando alguien dice un animal
         my $animal = $1;
         my $channel = $server->window_item_find($target);

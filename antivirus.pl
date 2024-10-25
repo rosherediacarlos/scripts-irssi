@@ -4,7 +4,7 @@ use Irssi;
 
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
-
+    $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     if ($message =~ /^!errores$/i) {
         my $chanel_info = $server->channel_find($target);
             if ($chanel_info) {
