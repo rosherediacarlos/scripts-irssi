@@ -40,20 +40,13 @@ my @admin_nicks = ("error_404_","CoraIine", "luck", "Mai");
 sub close_windows_except_1_and_2 {
     my $server = shift;
     
-    # Obtiene todas las ventanas abiertas
-    my @windows = Irssi::windows();
-
-    foreach my $window (@windows) {
+    foreach my $window (Irssi::windows()) {
         my $win_number = $window->{refnum};
-
-        # Si el número de la ventana no es 1 ni 2, ciérrala
-        if ($win_number != 1 && $win_number != 2) {
-            Irssi::command("window $win_number close");
-        }
+        $server->command("window $win_number close") if $win_number != 1 && $win_number != 2;
     }
 }
 
-# Configurar el temporizador para que se ejecute cada hora (3600000 milisegundos = 1 hora)
+# Ejecutar cada hora
 Irssi::timeout_add(3600000, 'close_windows_except_1_and_2', undef);
 
 # Funcion que envia los mensajes
@@ -95,8 +88,6 @@ sub event_join {
     # Enviar el mensaje de bienvenida
     send_messages($server,$nick);
     
-    # Cerrar la ventana después de enviar los mensajes
-    #$server->command("/window close");
 }
 
 # Registrar el evento que detecta cuando alguien se une al canal
