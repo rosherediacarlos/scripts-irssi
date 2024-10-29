@@ -8,8 +8,11 @@ my %users_to_kick;  # Hash para almacenar usuarios que aún no han cambiado el n
 sub check_generic_nick {
     my ($server, $channel, $nick, $address) = @_;
     
+    #poner el nick en minusculas para la comprobación
+    my $nick_lowercase = lc($nick);
+    
     # Patrón para detectar nicks que empiecen con 'invitado' o 'guest' y tengan números
-    if ($nick =~ /^invitado\d*$/i || $nick =~ /^guest\d*$/i || $nick =~ /^invitado_\d*$/i) {
+    if ($nick_lowercase =~ /^invitado\d*$/i || $nick_lowercase =~ /^guest\d*$/i || $nick_lowercase =~ /^invitado_\d*$/i) {
         # Envía un mensaje privado al usuario pidiéndole que cambie el nick
         $server->command("msg $channel hola $nick, por favor cambia el nick con /nick <nuevo_nick>.");
         
@@ -21,7 +24,7 @@ sub check_generic_nick {
                 # Después de 2 minutos, verificar si el nick no ha cambiado
                 if (exists $users_to_kick{$nick}) {
                     # Hacer el kick al usuario
-                    $server->command("kick $channel $nick No cambiaste tu nick en el tiempo permitido.");
+                    $server->command("kick $channel $nick No cambiaste tu nick en el tiempo permitido. Cambialo para acceder a la sala.");
                     #Irssi::print("El usuario $nick ha sido expulsado del canal $channel por no cambiar su nick.");
                     delete $users_to_kick{$nick};  # Eliminar de la lista después del kick
                 }

@@ -1,6 +1,13 @@
 use strict;
 use warnings;
 use Irssi;
+use utf8;
+
+# Convertir el código Unicode a un carácter
+sub unicode_to_char {
+    my ($unicode) = @_;
+    return chr(hex($unicode));
+}
 
 # Función para comprobar si existe el nick en la sala
 sub check_user_channel{
@@ -40,10 +47,44 @@ sub response {
     }
     elsif ($message =~ /^!patata$/i) {
         my $found_nick = $nick;
-        print("aaa");
         my $request= "A $nick casi le peta la patata del susto. ¡Estuvo a punto de convertirse en puré para la sala!";
         send_request($server, $request, $target, $found_nick);
     }
+    elsif ($message =~ /^!zapatos\s+(\w+)/i) {
+        # Extraemos el nick al que va dirigido el pase
+        my $tarject_nick = $1;  
+        # Verificar si el nick está en el canal
+        my $found_nick = check_user_channel($server,$tarject_nick, $target);
+
+        my $emoji_code = "1F969";  # Código Unicode sin "U+"
+        my $emoji = unicode_to_char($emoji_code);        
+        my $request= "Me acerco a $tarject_nick para quitarle los zapatos y los cojo con la boca y los llevo a su sitio, ahora mi $emoji de premio!";
+        utf8::decode($request);
+        send_request($server, $request, $target,$found_nick);
+    }
+    elsif ($message =~ /^!vela\s+(\w+)/i) {
+        # Extraemos el nick al que va dirigido el pase
+        my $tarject_nick = $1;  
+        # Verificar si el nick está en el canal
+        my $found_nick = check_user_channel($server,$tarject_nick, $target);
+        my $emoji_code = "1F56F";  # Código Unicode sin "U+"
+        my $emoji = unicode_to_char($emoji_code);        
+        my $request= "colocare una cuantas velas rodeando a $emoji $emoji $tarject_nick $emoji $emoji!";
+        utf8::decode($request);
+        send_request($server, $request, $target,$found_nick);
+    }   
+    elsif ($message =~ /^!fantasmas$/i) {
+        my $found_nick = $nick;
+        my $emoji_code = "1F47B";  # Código Unicode sin "U+"
+        my $emoji = unicode_to_char($emoji_code);       
+        my $request= " $emoji $emoji $emoji $emoji $emoji";
+        utf8::decode($request);
+        
+        my $window = Irssi::active_win; 
+        $window->command("me llama a sus amigos");
+    
+        send_request($server, $request, $target,$found_nick);
+    } 
 }
 
 # Enlaza el evento de recibir un mensaje público con la función respuesta
