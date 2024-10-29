@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Irssi;
+use utf8;
 
 # Función para comprobar si existe el nick en la sala
 sub check_user_channel{
@@ -17,6 +18,12 @@ sub check_user_channel{
     return $found_nick;
 }
 
+# Convertir el código Unicode a un carácter
+sub unicode_to_char {
+    my ($unicode) = @_;
+    return chr(hex($unicode));
+}
+
 # Función que se llama cuando alguien habla en el canal
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
@@ -27,8 +34,12 @@ sub response {
         # Verificar si el nick está en el canal
         my $found_nick = check_user_channel($server,$tarject_nick, $target);
         if ($found_nick){
-            my $request= "¡Cumpleaños feliz! ¡Cumpleaños feliz! ¡Te desean tus amigos desde aquí!";
+            
             my $window = Irssi::active_win; 
+            my $emoji_code = "1F973";  # Código Unicode sin "U+"
+            my $emoji = unicode_to_char($emoji_code);
+            my $request= "¡Cumpleaños feliz! ¡Cumpleaños feliz! ¡Te desean tus amigos desde aquí! $emoji";
+            utf8::decode($request);
             $window->command("/me saca el reproductor de CDs y prepara el cd de música, para celebrar el cumpleaños de $tarject_nick");
             $server->command("msg $target $request");
         }
