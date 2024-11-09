@@ -58,7 +58,7 @@ sub response {
 
         my $emoji_code = "1F969";  # Código Unicode sin "U+"
         my $emoji = unicode_to_char($emoji_code);        
-        my $request= "Me acerco a $tarject_nick para quitarle los zapatos y los cojo con la boca y los llevo a su sitio, ahora mi $emoji de premio!";
+        my $request= "se acerca y le quita de las manos a $tarject_nick los zapatos regresándolos al lugar donde los guarda su dueña. Ahora va feliz por su premio $emoji.";
         utf8::decode($request);
         send_request($server, $request, $target,$found_nick);
     }
