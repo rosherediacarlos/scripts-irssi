@@ -16,8 +16,8 @@ sub hangman_game {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
 
-    # Iniciar juego con !pelicula <palabra>
-    if ($message =~ /^!pelicula\s+(\w+)/i) {
+    # Iniciar juego con !ahorcado <palabra>
+    if ($message =~ /^!ahorcado\s+(\w+)/i) {
         if ($secret_word) {
             $server->command("msg $nick El juego ya está en marcha.");
             return;
