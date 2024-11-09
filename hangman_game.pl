@@ -10,6 +10,7 @@ my $current_lives = $lives;     # Número de vidas restantes
 my $secret_word;                # Palabra secreta
 my $guessed_letters = '';       # Letras adivinadas
 my $channel = "#hotelfantasma"; # Sala para jugar
+#my $channel = "#prueba-test"; # Sala para pruebas
 
 # Función para iniciar el juego
 sub hangman_game {
@@ -28,8 +29,8 @@ sub hangman_game {
         $guessed_letters = '';   # Letras adivinadas reiniciadas
         $host_player = $nick;    # Jugador que inició el juego
         $current_lives = $lives; # Reiniciar vidas
-
-        $server->command("msg $channel $nick ha iniciado el juego del ahorcado. Usa el comando !letra <letra> para adivinar o !resolver <palabra> para intentar resolver.");
+        print($secret_word);
+        $server->command("msg $channel $nick ha iniciado el juego del ahorcado. (Usa el comando !letra <letra> para probar con una letra o !resolver <palabra> para intentar resolver la palabra.)");
     }
 }
 
@@ -58,7 +59,7 @@ sub hangman_game_check_user_option {
                 cancel_game($server, $target);
             } else {
                 $current_lives--;
-                $server->command("msg $target \x0304Incorrecto. Te quedan $current_lives vidas.\x0304");
+                $server->command("msg $target \x0304Incorrecto. Os quedan $current_lives vidas.\x0304");
                 check_game_status($server, $target);
             }
         }
@@ -69,7 +70,7 @@ sub hangman_game_check_user_option {
             
             # Verificar si la letra ya fue adivinada
             if (index($guessed_letters, $letter) != -1) {
-                $server->command("msg $target $nick, ya has intentado con la letra '$letter'.");
+                $server->command("msg $target $nick, ya habeis intentado con la letra '$letter'.");
                 return;
             }
 
@@ -81,7 +82,7 @@ sub hangman_game_check_user_option {
                 $server->command("msg $target $nick, ¡la letra '$letter' está en la palabra!");
             } else {
                 $current_lives--;
-                $server->command("msg $target $nick, la letra '$letter' no está en la palabra. Te quedan $current_lives vidas.");
+                $server->command("msg $target $nick, la letra '$letter' no está en la palabra. Os quedan $current_lives vidas.");
             }
 
             # Mostrar el estado actual de la palabra con letras acertadas y asteriscos
@@ -113,7 +114,7 @@ sub check_game_status {
 
     # Si no quedan vidas
     if ($current_lives <= 0) {
-        $server->command("msg $target \x0304¡Juego terminado! Has perdido. La palabra era '$secret_word'.\x0304");
+        $server->command("msg $target \x0304¡Juego terminado! Habéis perdido. La palabra era '$secret_word'.\x0304");
         cancel_game($server, $target);
     }
     # Si todas las letras han sido adivinadas
