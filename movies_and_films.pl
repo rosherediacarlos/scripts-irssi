@@ -63,7 +63,7 @@ sub serie_and_movies_games{
     my ($server, $message, $nick, $addess, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     #Comando !menu <plato> para indiciar el juego, en privado
-    if ($message =~ /^!pelicula\s+(\w+)/i){
+    if ($message =~ /^!pelicula\s+([\w\-]+)/i){
         if ($movie){
             $server->command("msg $nick El juego ya está en marcha.");
             return 
@@ -156,7 +156,7 @@ sub check_user_option{
     #Comprobar si el juego sigue iniciado
     #&& $nick =~ $current_player
     #se ha quitado la comprobacion para que todos puedan responder
-    if ($movie && $message =~ /^!veremos\s+(\w+)/i) {
+    if ($movie && $message =~ /^!veremos\s+([\w\-]+)/i) {
         # Respuesta del usuario
         my @words = split(' ', $message);
         my $user_option = join(" ", @words[1..$#words]);

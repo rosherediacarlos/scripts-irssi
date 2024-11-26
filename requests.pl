@@ -37,7 +37,7 @@ sub send_request{
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
-    if ($message =~ /^!susto\s+(\w+)/i) {
+    if ($message =~ /^!susto\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
@@ -50,7 +50,7 @@ sub response {
         my $request= "A $nick casi le peta la patata del susto. ¡Estuvo a punto de convertirse en puré para la sala!";
         send_request($server, $request, $target, $found_nick);
     }
-    elsif ($message =~ /^!zapatos\s+(\w+)/i) {
+    elsif ($message =~ /^!zapatos\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
@@ -62,7 +62,7 @@ sub response {
         utf8::decode($request);
         send_request($server, $request, $target,$found_nick);
     }
-    elsif ($message =~ /^!vela\s+(\w+)/i) {
+    elsif ($message =~ /^!vela\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal

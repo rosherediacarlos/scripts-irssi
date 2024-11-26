@@ -1,3 +1,5 @@
+my @admin_nicks = ("error_404_","CoraIine", "luck", "Mai");
+
 sub restart_bot_tmux {
     Irssi::print("Restarting Irssi via tmux...");
     
@@ -14,9 +16,11 @@ sub handle_restart_command {
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
 
     if ($message =~ /^!restartbot\b/i) {
-        # Llamar a la función que reinicia el bot en tmux
-        restart_bot_tmux();
-        $server->command("msg $target Restarting Irssi bot via tmux...");
+        if (grep { $_ eq $nick } @admin_nicks){
+            # Llamar a la función que reinicia el bot en tmux
+            restart_bot_tmux();
+            $server->command("msg $target Restarting Irssi bot via tmux...");
+        }
     }
 }
 

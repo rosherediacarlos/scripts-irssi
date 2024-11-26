@@ -18,7 +18,7 @@ sub hangman_game {
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
 
     # Iniciar juego con !ahorcado <palabra>
-    if ($message =~ /^!ahorcado\s+(\w+)/i) {
+    if ($message =~ /^!ahorcado\s+([\w\-]+)/i) {
         if ($secret_word) {
             $server->command("msg $nick El juego ya está en marcha.");
             return;
@@ -65,7 +65,7 @@ sub hangman_game_check_user_option {
         }
 
         # Intento de adivinar una letra
-        if ($message =~ /^!letra\s+(\w)/i) {
+        if ($message =~ /^!letra\s+([\w\-]+)/i) {
             my $letter = lc $1;
             
             # Verificar si la letra ya fue adivinada

@@ -186,7 +186,7 @@ Irssi::signal_add('message public', sub {
 	    return;
 
 	}
-    } elsif ($game_active && $msg =~ /^!animal\s+(\w+)/i) {
+    } elsif ($game_active && $msg =~ /^!animal\s+([\w\-]+)/i) {
         # Manejar cuando alguien dice un animal
         my $animal = $1;
         my $channel = $server->window_item_find($target);

@@ -10,7 +10,7 @@ my %waiting_shot;
 sub start_shot {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
-    if ($message =~ /^!gol\s+(\w+)/i) {
+    if ($message =~ /^!gol\s+([\w\-]+)/i) {
         my $tarject_nick = $1;  # Extraemos el nick al que va dirigido el pase
 
         # Obtener información del canal

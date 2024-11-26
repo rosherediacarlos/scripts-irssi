@@ -28,7 +28,7 @@ sub unicode_to_char {
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
-    if ($message =~ /^!felicidades\s+(\w+)/i) {
+    if ($message =~ /^!felicidades\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal

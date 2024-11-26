@@ -62,7 +62,7 @@ sub guess_user_games{
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     
     #Comando !usuario <nick> para indiciar el juego, en privado
-    if ($message =~ /^!usuario\s+(\w+)/i){
+    if ($message =~ /^!usuario\s+([\w\-]+)/i){
         if ($guess_user){
             $server->command("msg $nick El juego ya está en marcha.");
             return 
@@ -148,7 +148,7 @@ sub check_user_option{
     my ($server, $message, $nick, $addess, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     #Comprobar si el juego sigue iniciado
-    if ($guess_user && $message =~ /^!usuario\s+(\w+)/i ) {
+    if ($guess_user && $message =~ /^!usuario\s+([\w\-]+)/i) {
         # Respuesta del usuario
         my @words = split(' ', $message);
         my $user_option = join(" ", @words[1..$#words]);

@@ -86,7 +86,7 @@ sub start_gastronomic_torture{
     my ($server, $message, $nick, $addess, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     #Comando !menu <plato> para indiciar el juego, en privado
-    if ($message =~ /^!menu\s+(\w+)/i){
+    if ($message =~ /^!menu\s+([\w\-]+)/i){
         if ($food_plate){
             $server->command("msg $nick El juego ya está en marcha.");
             return 
@@ -127,7 +127,7 @@ sub check_food_plate{
     my ($server, $message, $nick, $addess, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
     #Comprobar si el juego sigue iniciado
-    if ($food_plate && $message =~ /^!plato\s+(\w+)/i) {
+    if ($food_plate && $message =~ /^!plato\s+([\w\-]+)/i) {
         # Respuesta del usuario
         my @words = split(' ', $message);
         my $user_plate = join(" ", @words[1..$#words]);

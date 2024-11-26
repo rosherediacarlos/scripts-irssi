@@ -30,7 +30,7 @@ sub send_request{
 sub response {
     my ($server, $message, $nick, $address, $target) = @_;
     $message =~ s/\x03(?:\d{1,2}(?:,\d{1,2})?)?//g;
-    if ($message =~ /^!minipekka\s+(\w+)/i) {
+    if ($message =~ /^!minipekka\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
@@ -38,7 +38,7 @@ sub response {
         my $request= "$nick ha lanzado la carta del miniPEKKA contra $tarject_nick, por el camino va abriendo el apetito a la gente repitiendo 'pancakes'";
         send_request($server, $request, $target,$found_nick);
     }
-    elsif ($message =~ /^!bola de fuego\s+(\w+)/i) {
+    elsif ($message =~ /^!bola de fuego\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal
@@ -47,7 +47,7 @@ sub response {
 Te golpea en la frente, destruyendo todo a tu alrededor y convirtiéndote en un pollo frito churruscado";
         send_request($server, $request, $target,$found_nick);
     }
-    elsif ($message =~ /^!zap\s+(\w+)/i) {
+    elsif ($message =~ /^!zap\s+([\w\-]+)/i) {
         # Extraemos el nick al que va dirigido el pase
         my $tarject_nick = $1;  
         # Verificar si el nick está en el canal

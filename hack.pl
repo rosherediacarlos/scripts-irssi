@@ -12,7 +12,7 @@ sub hack_command {
     my @split_msg = split(' ', $msg);
     my $hack_nick = $split_msg[-1];
     
-    if ($msg =~ /^!hack\s+(\w+)/i) {
+    if ($msg =~ /^!hack\s+([\w\-]+)/i) {
         # Verifica que el nick esté presente
         unless ($nick) {
             $server->command("msg $channel Uso: !hack <nick>");
