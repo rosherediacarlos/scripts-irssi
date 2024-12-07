@@ -4,7 +4,7 @@ use Irssi;
 use Irssi::Irc;
 
 #lista de nicks baneados
-my @ban_nicks = ("amanecer_andaluz","pau__", "paula__", "paulita___");
+my @ban_nicks = ("amanecer_andaluz","pau__", "paula__", "paulita___", "Elpesao");
 
 # Declarar el nombre del script, autor y licencia
 Irssi::settings_add_str('ban_empotrador', 'ban_empotrador_message', 'Ban empotrador');
