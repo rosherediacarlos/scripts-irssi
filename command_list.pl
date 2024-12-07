@@ -45,17 +45,19 @@ my @admin_nicks = ("error_404_","CoraIine", "luck", "Mai");
 #!errores:\x02 Revisar errores de la sala. 
 #!mariposa: busca el nick de cora y escribe una frase.
 
-sub close_windows_except_1_and_2 {
-    my $server = shift;
-    
+sub close_windows_except_by_name {
+    my ($except_name) = @_;
+
     foreach my $window (Irssi::windows()) {
-        my $win_number = $window->{refnum};
-        $server->command("/window $win_number close") if $win_number != 1 && $win_number != 2;
+        # Intenta obtener el nombre desde el atributo "name" o desde "get_active_name"
+        my $active_item = $window->get_active_name // "Ninguno";
+
+        if ($active_item ne $except_name) {
+            # Cierra la ventana si no coincide con el nombre excepto
+            $window->command("window close");
+        }
     }
 }
-
-# Ejecutar cada hora
-#Irssi::timeout_add(3600000, 'close_windows_except_1_and_2', undef);
 
 # Funcion que envia los mensajes
 sub send_messages{
@@ -96,7 +98,8 @@ sub event_join {
     # Enviar el mensaje de bienvenida
     send_messages($server,$nick);
     #close_windows_except_1_and_2();
-    
+    close_windows_except_by_name('#hotelfantasma');
+    $server->command("/join #hotelfantasma");
 }
 
 # Registrar el evento que detecta cuando alguien se une al canal
