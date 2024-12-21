@@ -5,15 +5,20 @@ use LWP::UserAgent;
 use JSON;
 use MIME::Base64;
 use Irssi;
-use utf8;         # Para que Perl interprete correctamente las cadenas UTF-8 en el código fuente
-use open ':std', ':encoding(UTF-8)';   # Asegura que la entrada/salida también sea en UTF-8
-use Encode;       # Para manejar la conversión de codificación si es necesario
+use utf8;         
+use open ':std', ':encoding(UTF-8)';
+use Encode;
 use Time::Piece;
 
 # Archivo de credenciales y configuración
 my $SERVICE_ACCOUNT_FILE = '/home/pi/.irssi/scripts/autorun/irssi-bot-ip-eecc7ce36b17.json';
 my $SPREADSHEET_ID = '1vHzX9Ii4s5a7IzECcoQtobZB69-E2KggXTVszfIUjb4';
 my $SHEET_NAME = 'Sheet1';
+
+my $insert_ip = 0;
+
+#descipcion para insertar datos con el whois
+my $description_encoded = "";
 
 # Leer el archivo de credenciales JSON
 sub read_service_account_file {
@@ -71,7 +76,7 @@ sub get_access_token {
 
 # Insertar datos en la hoja de Google Sheets
 sub insert_data {
-    my ($access_token,$nick_complete, $nick, $ip, $description, $formatted_date) = @_;
+    my ($server,$user, $access_token,$nick_complete, $nick, $ip, $description, $formatted_date) = @_;
 
     my $ua = LWP::UserAgent->new;
     my $url = "https://sheets.googleapis.com/v4/spreadsheets/$SPREADSHEET_ID/values/$SHEET_NAME:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS";
@@ -80,7 +85,8 @@ sub insert_data {
     my @new_data = ($nick_complete,$nick, $ip, $description, $formatted_date);
 
     my $body = encode_json({ values => [\@new_data] });
-
+    
+    #Enviar datos excel
     my $response = $ua->post(
         $url,
         'Authorization' => "Bearer $access_token",
@@ -89,12 +95,13 @@ sub insert_data {
     );
 
     if ($response->is_success) {
-        Irssi::print("Datos añadidos correctamente: $nick, $ip, $description");
+        $server->command("msg $user Datos añadidos correctamente: $nick, $ip, $description");
     } else {
-        Irssi::print("Error añadiendo datos: " . $response->status_line);
+        $server->command("msg $user Datos añadidos correctamente: $nick, $ip, $description");
     }
 }
 
+#Obtener las credenciales y token para la conexión
 sub get_credentials {
     # Leer las credenciales y obtener el token de acceso
     my $credentials = read_service_account_file($SERVICE_ACCOUNT_FILE);
@@ -104,8 +111,9 @@ sub get_credentials {
     return $access_token
 }
 
-sub find_ip_in_excel {
-    my ($server, $ip_to_find, $access_token) = @_;
+#buscar ips en el fichero
+sub find_data_in_excel {
+    my ($server, $data_to_find, $access_token, $option) = @_;
 
     # Leer los datos actuales del Google Sheet
     my $sheet_data = get_sheet_data($access_token);
@@ -117,12 +125,24 @@ sub find_ip_in_excel {
 
         # La IP está en la columna 3 (índice 2 en 0-indexed)
         my $ip = $row->[2];  # Ajustado al índice correcto (columna IP)
-        
+        # La descripción está en la columna 4 (índice 3 en 0-indexed)
+        my $description = $row->[3] // '';
+        #nick
+        my $nick = $row->[1] // ''; 
+        #date
+        my $date = $row->[4] // ''; 
 
         # Verificar si la IP coincide con la que estamos buscando
-        if ($ip && $ip eq $ip_to_find) {
-            # Si hay coincidencia, agregar la fila completa a las coincidencias
-            push @matching_rows, $row;
+        if ($option eq 'ip' && $ip && $ip eq $data_to_find) {
+            # Agregar un hash con la IP y la descripción a las coincidencias
+            push @matching_rows, { nick => $nick, description => $description , date => $date};
+        }
+        # Verificar si el nick coincide con la que estamos buscando
+        # Si queremos que distinga mayusculas de minuculas usaremos el siguiente condición
+        # ($option eq 'nick' && $nick && $nick eq $data_to_find)
+        if ($option eq 'nick' && $nick && lc($nick) eq lc($data_to_find)) {
+            # Agregar un hash con la IP y la descripción a las coincidencias
+            push @matching_rows, { nick => $nick, description => $description , date => $date, ip => $ip};
         }
     }
 
@@ -133,23 +153,24 @@ sub find_ip_in_excel {
     }
 }
 
+#obtener datos del fichero
 sub get_sheet_data {
     my ($access_token) = @_;
-    my $range = $SHEET_NAME . '!A2:C'; # Cambia el rango según tus columnas y filas
+    my $range = $SHEET_NAME . '!A2:E'; # Cambia el rango según tus columnas y filas
     
     # Hacer una solicitud GET a la API de Google Sheets
     #my $url = "https://sheets.googleapis.com/v4/spreadsheets/$SPREADSHEET_ID/values/$range";
     my $url = "https://sheets.googleapis.com/v4/spreadsheets/$SPREADSHEET_ID/values:batchGet?ranges=$range";
-    my $response = `curl -s -X GET -H "Authorization: Bearer $access_token" "$url"`;
-    $response = decode('UTF-8', $response, 1);
-
+    my $response = `curl -s -X GET -H "Authorization: Bearer $access_token" "$url" | iconv -f ISO-8859-1 -t UTF-8`;
+    $response = decode('UTF-8', $response, Encode::FB_CROAK); # Detecta errores en la codificación
+    $response = encode('UTF-8', $response); # Re-encode para limpiar errores
+    
     # Decodificar el JSON de respuesta
     my $data = decode_json($response);
     # Verificar si hay valores
     if ($data->{valueRanges} && @{$data->{valueRanges}} > 0 && $data->{valueRanges}[0]{values}) {
         return $data->{valueRanges}[0]{values}; # Array de filas
     } else {
-        Irssi::print("No se pudieron obtener datos del Google Sheet.");
         return [];
     }
 }
@@ -157,15 +178,21 @@ sub get_sheet_data {
 
 # Función que se llama cuando recibimos un mensaje privado
 sub add_new_ip_to_excel {
-    my ($server, $msg, $nick, $address, $target) = @_;
+    my ($server, $msg, $user, $address, $target) = @_;
 
     # Comprobar si el mensaje empieza con !add_ip
-    if ($msg =~ /^!add_ip (\S+) (.*)$/) {
-        my $nick_complete = $1;               # El nick completo, antes del '@'
-        my $description_received = decode('utf-8', $2) || '';   # Si no hay descripción, se deja vacía
+    if ($msg =~ /^!add_ip (\S+)(?:\s+(.*))?$/) {
+        # El nick completo
+        my $nick_complete = $1;      
+        # Si no hay descripción, se deja vacía        
+        my $description_received = decode('UTF-8', $2) || ''; 
+        $description_encoded = encode('UTF-8', $description_received); 
+        #divivir el nick 
         my @nick_splited = split /@/, $nick_complete;
-        my $nick = $nick_splited[0];           # El nombre del nick antes del '@'
-        my $ip = $nick_splited[1];             # La IP después del '@'
+         # El nombre del nick antes del '@'
+        my $nick = $nick_splited[0];
+        # La IP después del '@'          
+        my $ip = $nick_splited[1];             
         
         # Leer las credenciales y obtener el token de acceso
         my $access_token = get_credentials();
@@ -175,7 +202,7 @@ sub add_new_ip_to_excel {
         my $formatted_date = $t->strftime("%d.%m.%Y");
 
         # Insertar los datos en Google Sheets
-        insert_data($access_token, $nick_complete, $nick, $ip, $description_received, $formatted_date);
+        insert_data($server,$user, $access_token, $nick_complete, $nick, $ip, $description_received, $formatted_date);
     }
     if ($msg =~ /^!search_ip (\S+)$/) {
         my $ip_to_find = $1;
@@ -184,25 +211,90 @@ sub add_new_ip_to_excel {
         my $access_token = get_credentials();
 
         #aviso que estamos buscando ips
-        $server->command("msg $nick buscando coincidencias");
+        $server->command("msg $user buscando coincidencias");
 
-        # Buscar todas las coincidencias para la IP
-        my $matching_rows = find_ip_in_excel($server, $ip_to_find, $access_token);
+        my $matching_rows = find_data_in_excel($server, $ip_to_find, $access_token, 'ip');
 
         # Verificar si hay coincidencias
         if (@$matching_rows) {
-            # Extraer solo los nicks (columna 2)
-            my @nicks = map { $_->[1] // "Desconocido" } @$matching_rows;
+            # Construir un mensaje con nick y descripción
+            my @details = map { 
+                my $nick = $_->{nick} // "Desconocido"; # Suponiendo que nick esté en el hash
+                my $description = $_->{description} // "Sin descripción";
+		        my $date = $_->{date} // "Sin fecha";
+                "{\x02$nick\x02 \x1Fdescripción:\x1F$description, \x1Ffecha\x1F:$date}" 
+            } @$matching_rows;
 
             # Enviar el resultado al usuario
-            my $response_message = "Coincidencias encontradas para \x02\x0304$ip_to_find\x03\x02: " . join(", ", map { "\x02$_\x02" } @nicks);
-
-            $server->command("msg $nick $response_message");
+            my $response_message = "Coincidencias encontradas para \x02\x0304$ip_to_find\x03\x02: " . join(", ", @details);
+            $server->command("msg $user $response_message");
         } else {
-            $server->command("msg $nick No se encontraron coincidencias para la IP: $ip_to_find");
+            $server->command("msg $user No se encontraron coincidencias para la IP: $ip_to_find");
         }
     }
+    if ($msg =~ /^!search_nick (\S+)$/) {
+        my $nick_to_find = $1;
+
+        # Leer las credenciales y obtener el token de acceso
+        my $access_token = get_credentials();
+
+        #aviso que estamos buscando ips
+        $server->command("msg $user buscando coincidencias");
+
+        my $matching_rows = find_data_in_excel($server, $nick_to_find, $access_token, 'nick');
+
+        # Verificar si hay coincidencias
+        if (@$matching_rows) {
+            # Construir un mensaje con nick y descripción
+            my @details = map { 
+                my $nick = $_->{nick} // "Desconocido"; # Suponiendo que nick esté en el hash
+                my $description = $_->{description} // "Sin descripción";
+		        my $date = $_->{date} // "Sin fecha";
+                my $ip = $_->{ip} // "";
+                "{ \x02\x1FIP/Vhost:\x1F\x02$ip \x02\x1Fdescripción:\x1F\x02$description, \x02\x1Ffecha:\x1F\x02$date}" 
+            } @$matching_rows;
+
+            # Enviar el resultado al usuario
+            my $response_message = "Coincidencias encontradas para \x02\x0304$nick_to_find\x03\x02: " . join(", ", @details);
+            $server->command("msg $user $response_message");
+        } else {
+            $server->command("msg $user No se encontraron coincidencias para la IP: $nick_to_find");
+        }
+    }
+    if ($msg =~ /^!add_whois (\S+)(?:\s+(.*))?$/) {
+        # El nick para añadir
+        my $nick_to_add = $1;
+   
+        # Si no hay descripción, se deja vacía        
+        my $description_received = decode('UTF-8', $2) || ''; 
+        $description_encoded = encode('UTF-8', $description_received); 
+        $insert_ip = 1;
+        #Hacer whois al nick para agregar los datos   
+        $server->command("whois $nick_to_add");
+        
+    }
 }
+
+# Captura la respuesta del comando whois (event 311)
+Irssi::signal_add("event 311", sub {
+    my ($server, $data) = @_;
+    my (undef, $nick, $user, $ip) = split(" ", $data);
+    if ($nick && $insert_ip){
+         # Leer las credenciales y obtener el token de acceso
+        my $access_token = get_credentials();
+
+        # Usar Time::Piece para obtener la fecha y hora actual
+        my $t = localtime;
+        my $formatted_date = $t->strftime("%d.%m.%Y");
+
+        #nick completo
+        my $nick_complete = $nick."@".$ip;
+
+        # Insertar los datos en Google Sheets
+        insert_data($server,$user, $access_token, $nick_complete, $nick, $ip, $description_encoded, $formatted_date);
+    }
+    
+});
 
 # Añadir la señal para escuchar los mensajes privados
 Irssi::signal_add('message private', 'add_new_ip_to_excel');
